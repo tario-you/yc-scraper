@@ -33,11 +33,16 @@ def click_see_all_options():
 
 def compile_batches():
     """Returns elements of checkboxes from all batches."""
-    pattern = re.compile(r'^(W|S|IK)[012]')
+    # Match labels like 'Summer 2025', 'Winter 2024', etc.
+    pattern = re.compile(r'^(Summer|Winter|Spring|Fall) \d{4}')
     bx = driver.find_elements(By.XPATH, '//label')
+    print(f"Found {len(bx)} label elements for batches.")
     for element in bx:
-        if pattern.match(element.text):
-            yield element
+        print(f"Label text: '{element.text}'")
+    matched = [element for element in bx if pattern.match(element.text)]
+    print(f"Matched {len(matched)} batch elements.")
+    for element in matched:
+        yield element
 
 
 def scroll_to_bottom():
@@ -82,10 +87,11 @@ def yc_links_extractor():
     get_page_source()
     click_see_all_options()
     # compile an array of batches (checkbox elements)
-    batches = compile_batches()
+    batches = list(compile_batches())
+    print(f"Total batches to process: {len(batches)}")
     ulist = []
 
-    for b in tqdm(list(batches)):
+    for b in tqdm(batches):
         # filter companies
         b.click()
 
@@ -94,11 +100,12 @@ def yc_links_extractor():
 
         # fetch links and append them to ulist
         urls = [u for u in fetch_url_paths()]
+        print(f"Found {len(urls)} company links for this batch.")
         ulist.extend(urls)
 
         # uncheck the batch checkbox
         b.click()
-    
+    print(f"Total unique company links collected: {len(set(ulist))}")
     write_urls_to_file(ulist)
     driver.quit()
 
