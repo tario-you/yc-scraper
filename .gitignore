@@ -3,10 +3,10 @@
 **/.DS_Store
 .ipynb_checkpoints
 .vscode
-*.html
 *.pyc
 *ipynb
 geckodriver.log
+.env
 
 # Output files
 output.jl
