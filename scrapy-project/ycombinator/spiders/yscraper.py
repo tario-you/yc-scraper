@@ -1,11 +1,17 @@
 import json
+from pathlib import Path
+
 import scrapy
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+START_URLS_PATH = BASE_DIR / "start_urls.txt"
 
 
 def make_start_urls_list():
     """Returns a list with the start urls."""
-    with open('scrapy-project/ycombinator/start_urls.txt', 'r') as f:
-        return eval(f.read())
+    with START_URLS_PATH.open("r", encoding="utf-8") as f:
+        return json.loads(f.read())
 
 
 class YCombinator(scrapy.Spider):
@@ -19,25 +25,37 @@ class YCombinator(scrapy.Spider):
         # cl = 'script.js-react-on-rails-component'
         # st = rc(f'{cl}[data-component-name="CompaniesShowPage"]::text').get()
         st = response.css('[data-page]::attr(data-page)').get()
-        if 1 is not None:
-            # load the JSON object and set the variable for the 'Company' data
-            jo = json.loads(st)['props']
-            jc = jo['company']
-            yield {
-                'company_id': jc['id'],
-                'company_name': jc['name'],
-                'short_description': jc['one_liner'],
-                'long_description': jc['long_description'],
-                'batch': jc['batch_name'],
-                'status': jc['ycdc_status'],
-                'tags': jc['tags'],
-                'location': jc['location'],
-                'country': jc['country'],
-                'year_founded': jc['year_founded'],
-                'num_founders': len(jc['founders']),
-                'founders_names': [f['full_name'] for f in jc['founders']],
-                'team_size': jc['team_size'],
-                'website': jc['website'],
-                'cb_url': jc['cb_url'],
-                'linkedin_url': jc['linkedin_url'],
-            }
+        if not st:
+            return
+        # load the JSON object and set the variable for the 'Company' data
+        jo = json.loads(st)['props']
+        jc = jo['company']
+        founders = jc['founders']
+        yield {
+            'company_id': jc['id'],
+            'company_name': jc['name'],
+            'short_description': jc['one_liner'],
+            'long_description': jc['long_description'],
+            'batch': jc['batch_name'],
+            'status': jc['ycdc_status'],
+            'tags': jc['tags'],
+            'location': jc['location'],
+            'country': jc['country'],
+            'year_founded': jc['year_founded'],
+            'num_founders': len(founders),
+            'founders_names': [f['full_name'] for f in founders],
+            'founder_details': [
+                {
+                    'name': f.get('full_name'),
+                    'title': f.get('title'),
+                    'bio': f.get('founder_bio'),
+                    'linkedin_url': f.get('linkedin_url'),
+                    'twitter_url': f.get('twitter_url'),
+                }
+                for f in founders
+            ],
+            'team_size': jc['team_size'],
+            'website': jc['website'],
+            'cb_url': jc['cb_url'],
+            'linkedin_url': jc['linkedin_url'],
+        }

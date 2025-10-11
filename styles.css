@@ -300,6 +300,52 @@ button:hover {
   word-break: break-all;
 }
 
+.company-founders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.founder-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: rgba(15, 98, 254, 0.08);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+}
+
+.founder-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.founder-name {
+  font-weight: 600;
+  color: inherit;
+}
+
+.founder-name:hover,
+.founder-name:focus {
+  text-decoration: none;
+}
+
+.founder-title {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.founder-bio {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
 .meta a.is-empty {
   opacity: 0.4;
   pointer-events: none;

@@ -245,10 +245,7 @@ function buildCompanyCard(record) {
     record.team_size ?? "Unknown";
   fragment.querySelector(".company-year").textContent =
     record.year_founded ?? "—";
-  const founders = record.founders_names?.filter(Boolean) ?? [];
-  fragment.querySelector(".company-founders").textContent = founders.length
-    ? founders.join(", ")
-    : "—";
+  populateFounders(fragment, record);
 
   setLink(fragment.querySelector(".company-website"), record.website, "—", true);
   setLink(fragment.querySelector(".company-cb"), record.cb_url, "—", true);
@@ -386,6 +383,60 @@ function setLink(element, url, emptyText = "—", useHost = false) {
     element.classList.add("is-empty");
     element.removeAttribute("href");
   }
+}
+
+function populateFounders(fragment, record) {
+  const container = fragment.querySelector(".company-founders");
+  if (!container) return;
+
+  const details = record.founder_details?.filter(
+    (founder) => founder?.name || founder?.bio
+  );
+
+  if (details?.length) {
+    container.innerHTML = "";
+    details.forEach((founder) => {
+      const profile = document.createElement("div");
+      profile.className = "founder-profile";
+
+      const header = document.createElement("div");
+      header.className = "founder-header";
+
+      const name = document.createElement(
+        founder.linkedin_url ? "a" : "span"
+      );
+      name.className = "founder-name";
+      name.textContent = founder.name ?? "Unknown founder";
+      if (founder.linkedin_url) {
+        name.href = founder.linkedin_url;
+        name.target = "_blank";
+        name.rel = "noopener";
+      }
+      header.appendChild(name);
+
+      if (founder.title) {
+        const title = document.createElement("span");
+        title.className = "founder-title";
+        title.textContent = founder.title;
+        header.appendChild(title);
+      }
+
+      profile.appendChild(header);
+
+      if (founder.bio) {
+        const bio = document.createElement("p");
+        bio.className = "founder-bio";
+        bio.textContent = founder.bio;
+        profile.appendChild(bio);
+      }
+
+      container.appendChild(profile);
+    });
+    return;
+  }
+
+  const names = record.founders_names?.filter(Boolean) ?? [];
+  container.textContent = names.length ? names.join(", ") : "—";
 }
 
 searchInput.addEventListener("input", debounce(applyFilters, 200));

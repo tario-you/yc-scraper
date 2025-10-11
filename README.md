@@ -70,6 +70,7 @@ Check out the dataset I published on [Kaggle.com](https://www.kaggle.com/dataset
 | year_founded          | Year the company was founded  | int  |
 | num_founders          | Number of founders  | int  |
 | founders_names        | Full names of the founders  | list  |
+| founder_details       | Extended founder bios and social links | list  |
 | team_size             | Number of employees  | int  |
 | website               | Company website   | string  |
 | cb_url                | Company Crunchbase url  | string  |
