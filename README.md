@@ -1,6 +1,10 @@
 # Y Combinator Directory Scraper
 
+Live explorer: [yc-scraper-five.vercel.app](https://yc-scraper-five.vercel.app/) · Maintained by [Tario You](https://linkedin.com/in/tario-you)
+
 I built YC-Scraper to create a dataset of all the companies in the [Y Combinator directory](https://www.ycombinator.com/companies/). You can search for companies by industry, region, company size, and more in this directory.
+
+This fork also includes a plain HTML/CSS/JS explorer—no build tools or frameworks required.
 
 ## About Y Combinator
 
@@ -19,16 +23,32 @@ Python packages include:
 
 ## Usage
 
-1. Clone this repository
-2. Move to the `yc-scraper` directory
-    2. [Optional] Create an environment for `yc-scraper` (for example by ```conda create --name <env_name> --file requirements.txt```)
-3. Run `python yc_links_extractor.py`. This will fetch the individual URLs for the spider to crawl.
-4. Run `scrapy runspider scrapy-project/ycombinator/spiders/yscraper.py -o output.jl`. This generates a JSON lines file which you can read with Pandas:
+1. Clone this repository.
+2. Move to the `yc-scraper` directory. (Optional) Create a virtual environment and install the dependencies with `pip install -r requirements.txt`.
+3. Export the Algolia credentials exposed by the YC directory (visible in the browser network panel) and run the parallel link extractor:
 
-```python
-import pandas as pd
-df = pd.read_json('./output.jl', lines=True)
-```
+    ```bash
+    export ALGOLIA_APP_ID="45BWZJ1SGC"
+    export ALGOLIA_API_KEY="<your-search-only-key>"
+    # optional override; defaults to YCCompany_production
+    export ALGOLIA_INDEX="YCCompany_production"
+    python scripts/yc_links_extractor.py
+    ```
+
+    This writes `scrapy-project/ycombinator/start_urls.txt` for the spider.
+4. Run `scrapy runspider scrapy-project/ycombinator/spiders/yscraper.py -o output.jl`. The resulting JSON Lines file can be read directly in Pandas:
+
+    ```python
+    import pandas as pd
+    df = pd.read_json('output.jl', lines=True)
+    ```
+
+5. (Optional) Turn the crawl output into a UI-ready JSON bundle and launch the static explorer:
+
+    ```bash
+    python scripts/convert_output_to_json.py
+    python -m http.server 3000  # open http://localhost:3000
+    ```
 
 ## Dataset
 
