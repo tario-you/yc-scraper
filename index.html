@@ -11,6 +11,17 @@
   </head>
   <body>
     <header class="header">
+      <div class="owner-info">
+        <span class="owner-name">Built by Tario You</span>
+        <a
+          class="owner-link"
+          href="https://www.linkedin.com/in/tario-you"
+          target="_blank"
+          rel="noopener"
+        >
+          LinkedIn
+        </a>
+      </div>
       <h1>YC Directory Explorer</h1>
       <p id="lastScraped" class="last-scraped"></p>
       <p>
@@ -64,6 +75,13 @@
               data-direction="desc"
             >
               Descending ↓
+            </button>
+            <button
+              id="downloadJson"
+              class="download-button"
+              type="button"
+            >
+              Download JSON
             </button>
           </div>
         </div>

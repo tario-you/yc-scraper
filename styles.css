@@ -36,6 +36,29 @@ body {
   font-size: clamp(1.8rem, 2.5vw, 2.6rem);
 }
 
+.owner-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.owner-link {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.owner-link:hover,
+.owner-link:focus {
+  text-decoration: none;
+}
+
 .header p {
   margin: 0.75rem auto 0;
   max-width: 720px;
@@ -175,6 +198,27 @@ button:hover {
 .sort-controls button:hover {
   filter: none;
   background: rgba(15, 98, 254, 0.1);
+}
+
+.download-button {
+  width: auto;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.05rem;
+  font-size: 0.9rem;
+}
+
+.download-button:hover {
+  filter: brightness(1.1);
+  background: var(--primary);
+}
+
+.download-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: none;
 }
 
 .results-grid {

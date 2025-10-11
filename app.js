@@ -9,6 +9,7 @@ const resultCount = document.querySelector("#resultCount");
 const sortSelect = document.querySelector("#sortSelect");
 const sortDirectionBtn = document.querySelector("#sortDirection");
 const clearFiltersBtn = document.querySelector("#clearFilters");
+const downloadBtn = document.querySelector("#downloadJson");
 const template = document.querySelector("#companyTemplate");
 
 let companies = [];
@@ -59,6 +60,9 @@ function loadData() {
       console.error("[YC Explorer] Data load failed:", error);
       resultsContainer.innerHTML = `<div class="empty-state">Error loading dataset: ${error.message}. Ensure <code>${DATA_URL}</code> is deployed and accessible.</div>`;
       resultCount.textContent = "0 companies";
+      if (downloadBtn) {
+        downloadBtn.disabled = true;
+      }
     });
 }
 
@@ -284,6 +288,9 @@ function applyFilters() {
 
 function renderResults() {
   resultCount.textContent = `${filtered.length.toLocaleString()} companies`;
+  if (downloadBtn) {
+    downloadBtn.disabled = filtered.length === 0;
+  }
   lazyObserver.disconnect();
   renderedCount = 0;
 
@@ -343,6 +350,23 @@ function clearFilters() {
   applyFilters();
 }
 
+function downloadFilteredCompanies() {
+  if (!filtered.length) return;
+
+  const timestamp = new Date().toISOString().split("T")[0];
+  const blob = new Blob([JSON.stringify(filtered, null, 2)], {
+    type: "application/json",
+  });
+  const tempUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = tempUrl;
+  link.download = `yc-companies-filtered-${timestamp}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(tempUrl);
+}
+
 function extractHost(url) {
   try {
     return new URL(url).host;
@@ -368,6 +392,10 @@ searchInput.addEventListener("input", debounce(applyFilters, 200));
 batchSelect.addEventListener("change", applyFilters);
 tagSelect.addEventListener("change", applyFilters);
 clearFiltersBtn.addEventListener("click", clearFilters);
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", downloadFilteredCompanies);
+  downloadBtn.disabled = true;
+}
 
 if (sortSelect) {
   sortSelect.addEventListener("change", () => {
